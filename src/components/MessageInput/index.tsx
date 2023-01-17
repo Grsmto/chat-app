@@ -20,6 +20,8 @@ export const MessageInput = ({
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (!value) return;
+
     onSend(value);
     setValue("");
   };
