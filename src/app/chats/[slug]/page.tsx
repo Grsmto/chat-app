@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { redirect } from "next/navigation";
 import { ChatMessage } from "@/components/ChatMessage";
 import { MessageInput } from "@/components/MessageInput";
 import { ActionType, ACTIVE_USER_ID, useChatStore } from "../store";
@@ -16,7 +17,9 @@ export default function Page({ params }: { params: { slug: string } }) {
   } | null>(null);
   const chat = chats.find((chat) => chat.id === params.slug);
 
-  if (!chat) return null;
+  if (!chat) {
+    redirect(`/chats/${chats[0].id}`);
+  }
 
   const handleSubmit = (value: string) => {
     if (editingMsg) {
