@@ -1,10 +1,23 @@
 "use client";
 
+import { ChatMessage } from "@/components/ChatMessage";
 import { MessageInput } from "@/components/MessageInput";
+import { ActionType, ACTIVE_USER_ID, useChatStore } from "../store";
 
 export default function Page({ params }: { params: { slug: string } }) {
+  const {
+    state: { chats },
+    dispatch,
+  } = useChatStore();
+  const chat = chats.find((chat) => chat.id === params.slug);
+
+  if (!chat) return null;
+
   const handleSubmit = (value: string) => {
-    console.log(value);
+    dispatch({
+      type: ActionType.NEW_MESSAGE,
+      payload: { chatId: chat.id, value },
+    });
   };
 
   return (
