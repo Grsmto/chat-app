@@ -42,12 +42,17 @@ export const ChatMessage = ({
         )}
         <div
           className={clsx(
-            "relative mr-3 text-sm py-2 px-4 shadow rounded-xl",
+            "relative text-sm py-2 px-4 shadow rounded-xl",
             isSender ? "bg-white" : "bg-indigo-100"
           )}
         >
           <div>{text}</div>
-          <div className="absolute text-xs -top-5 left-0 -mb-5 mr-2 text-gray-500 whitespace-nowrap">
+          <div
+            className={clsx(
+              "absolute text-xs -top-5 -mb-5 text-gray-500 whitespace-nowrap",
+              isSender ? "right-0" : "left-0"
+            )}
+          >
             {/* I would typically use a date formatting library for an actual app, like: https://date-fns.org/ */}
             {new Intl.DateTimeFormat("en-GB", {
               dateStyle: "short",
