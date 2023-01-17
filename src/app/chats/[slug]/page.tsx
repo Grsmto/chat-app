@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { ChatMessage } from "@/components/ChatMessage";
 import { MessageInput } from "@/components/MessageInput";
 import { ActionType, ACTIVE_USER_ID, useChatStore } from "../store";
@@ -9,15 +10,31 @@ export default function Page({ params }: { params: { slug: string } }) {
     state: { chats },
     dispatch,
   } = useChatStore();
+  const [editingMsg, setEditMsg] = useState<{
+    id: string;
+    text: string;
+  } | null>(null);
   const chat = chats.find((chat) => chat.id === params.slug);
 
   if (!chat) return null;
 
   const handleSubmit = (value: string) => {
-    dispatch({
-      type: ActionType.NEW_MESSAGE,
-      payload: { chatId: chat.id, value },
-    });
+    if (editingMsg) {
+      dispatch({
+        type: ActionType.EDIT_MESSAGE,
+        payload: { chatId: chat.id, messageId: editingMsg.id, value },
+      });
+      setEditMsg(null);
+    } else {
+      dispatch({
+        type: ActionType.NEW_MESSAGE,
+        payload: { chatId: chat.id, value },
+      });
+    }
+  };
+
+  const handleEdit = (id: string, text: string) => {
+    setEditMsg({ id, text });
   };
 
   return (
@@ -29,6 +46,7 @@ export default function Page({ params }: { params: { slug: string } }) {
               {chat?.messages.map((message) => (
                 <ChatMessage
                   key={message.id}
+                  onEdit={handleEdit}
                   text={message.text}
                   id={message.id}
                   dateTime={message.last_updated}
@@ -41,7 +59,7 @@ export default function Page({ params }: { params: { slug: string } }) {
             </div>
           </div>
         </div>
-        <MessageInput onSend={handleSubmit} />
+        <MessageInput onSend={handleSubmit} value={editingMsg?.text} />
       </div>
     </main>
   );

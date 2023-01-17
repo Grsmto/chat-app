@@ -9,10 +9,12 @@ import {
 
 type MessageInputProps = {
   onSend: (text: string) => any;
+  value?: string;
 };
 
 export const MessageInput = ({
   onSend,
+  value: editValue,
 }: PropsWithChildren<MessageInputProps>) => {
   const [value, setValue] = useState<string>("");
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -25,6 +27,10 @@ export const MessageInput = ({
   const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.currentTarget.value);
   }, []);
+
+  useEffect(() => {
+    if (editValue) setValue(editValue);
+  }, [editValue]);
 
   return (
     <form

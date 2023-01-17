@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useCallback } from "react";
 import clsx from "clsx";
 
 type ChatMessageProps = {
@@ -7,6 +7,7 @@ type ChatMessageProps = {
   dateTime: string;
   isSender?: boolean;
   author?: string;
+  onEdit?: (id: string, text: string) => any;
 };
 
 export const ChatMessage = ({
@@ -15,7 +16,12 @@ export const ChatMessage = ({
   id,
   dateTime,
   isSender = false,
+  onEdit,
 }: PropsWithChildren<ChatMessageProps>) => {
+  const handleEdit = useCallback(() => {
+    onEdit?.(id, text);
+  }, [text, id, onEdit]);
+
   return (
     <div
       className={clsx(
@@ -48,6 +54,14 @@ export const ChatMessage = ({
               timeStyle: "short",
             }).format(new Date(dateTime))}
           </div>
+          {isSender && (
+            <button
+              className="hidden absolute group-hover:block bg-indigo-500 py-1 px-2 text-white rounded-xl"
+              onClick={handleEdit}
+            >
+              Edit
+            </button>
+          )}
         </div>
       </div>
     </div>

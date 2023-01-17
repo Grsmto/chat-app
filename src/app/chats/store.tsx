@@ -17,17 +17,25 @@ export interface State {
 }
 
 export enum ActionType {
+  EDIT_MESSAGE = "edit message",
   NEW_MESSAGE = "new message",
 }
 
-export type Action = {
-  type: ActionType.NEW_MESSAGE;
-  payload: { chatId: string; value: string };
-};
+export type Action =
+  | {
+      type: ActionType.EDIT_MESSAGE;
+      payload: { chatId: string; messageId: string; value: string };
+    }
+  | {
+      type: ActionType.NEW_MESSAGE;
+      payload: { chatId: string; value: string };
+    };
 
+// We use Immerjs for easier reducer operations
 export const reducer = produce<(draft: State, action: Action) => State>(
   (draft, action) => {
     let currentChat;
+    let currentMsg;
 
     switch (action.type) {
       case ActionType.NEW_MESSAGE:
@@ -41,6 +49,25 @@ export const reducer = produce<(draft: State, action: Action) => State>(
           last_updated: new Date().toISOString(),
           from: ACTIVE_USER_ID,
         });
+
+        break;
+      case ActionType.EDIT_MESSAGE:
+        currentChat = draft.chats.find(
+          (chat) => chat.id === action.payload.chatId
+        );
+        currentMsg = currentChat?.messages.find(
+          (message) => message.id === action.payload.messageId
+        );
+
+        if (!currentMsg || !currentChat) return draft;
+
+        if (action.payload.value === "") {
+          currentChat.messages = currentChat?.messages.filter(
+            (message) => message.id !== action.payload.messageId
+          );
+        } else {
+          currentMsg.text = action.payload.value;
+        }
 
         break;
       default:
