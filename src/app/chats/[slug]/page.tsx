@@ -25,7 +25,20 @@ export default function Page({ params }: { params: { slug: string } }) {
       <div className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
         <div className="flex flex-col h-full overflow-auto -mt-4 -mx-2">
           <div className="flex flex-col h-full mb-4 mt-8">
-            <div className="grid grid-cols-12 gap-y-2"></div>
+            <div className="grid grid-cols-12 gap-y-2">
+              {chat?.messages.map((message) => (
+                <ChatMessage
+                  key={message.id}
+                  text={message.text}
+                  id={message.id}
+                  dateTime={message.last_updated}
+                  {...(message.from === ACTIVE_USER_ID && {
+                    isSender: true,
+                    author: chat.name,
+                  })}
+                />
+              ))}
+            </div>
           </div>
         </div>
         <MessageInput onSend={handleSubmit} />
