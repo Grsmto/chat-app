@@ -1,15 +1,7 @@
 import * as R from "remeda";
 import { ChatList } from "./ChatList";
+import { getChatData } from "./service";
 import { ChatStoreProvider } from "./store";
-
-async function getData() {
-  const res = await fetch(
-    `http://localhost:${process.env.PORT ?? 3000}/code_test_data.json`
-  );
-
-  const data: Chat[] = await res.json();
-  return data;
-}
 
 export default async function RootLayout({
   children,
@@ -17,7 +9,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   // Using new Next.js 13 feature for fun. See https://beta.nextjs.org/docs/data-fetching/fetching#asyncawait-in-server-components
-  const data = await getData();
+  const data = await getChatData();
   // Let's order data initially instead of on render, as a typically this would be done
   // in an API service or on the backend
   const sortedData = R.pipe(
